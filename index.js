@@ -1,15 +1,20 @@
-var express = require('express');
+var express = require('express'),
+    path = require('path'),
+    bodyParser = require('body-parser');
+
 var app = express();
 
-app.get('/', function (req, res) {
-    res.send('Hello from Cisco Shipped!');
+app
+  .use(bodyParser.json())
+  .use(bodyParser.urlencoded({extended: true}))
+  .use(express.static('./build'))
+
+app.get('/auth/:code', function(req, res) {
+  console.log(req.params.code);
+})
+
+app.get('*', function(req, res) {
+  res.sendFile(path.join(__dirname, 'build/index.html'));
 });
 
-var server = app.listen(3000, function () {
-
-    var host = server.address().address;
-    var port = server.address().port;
-
-    console.log('Example app listening at http://%s:%s', host, port);
-
-});
+app.listen(3000);
